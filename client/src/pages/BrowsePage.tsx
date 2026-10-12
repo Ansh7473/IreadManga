@@ -4,7 +4,6 @@ import { api, type TagItem } from "../api";
 import { usePageTitle } from "../hooks/usePageTitle";
 import type { MangaCard } from "../types";
 import { MangaCard as Card } from "../components/MangaCard";
-import { AdSlot } from "../components/AdSlot";
 import { CommunitySidebar } from "../components/CommunitySidebar";
 
 const SORTS = [
@@ -264,8 +263,6 @@ export default function BrowsePage() {
 
       <div className="page-with-community">
         <div className="page-with-community__main">
-          <AdSlot minHeight={72} />
-
           {loading ? (
             <div className="grid grid--covers">
               {Array.from({ length: 12 }).map((_, i) => (
