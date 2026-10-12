@@ -10,7 +10,6 @@ import { useAuth } from "../auth/AuthContext";
 
 export function Layout() {
   const [searchOpen, setSearchOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
   const isReader = location.pathname.startsWith("/read/");
   const { user } = useAuth();
@@ -28,13 +27,10 @@ export function Layout() {
 
   return (
     <div
-      className={`app-shell ${isReader ? "app-shell--reader" : ""} ${sidebarCollapsed ? "app-shell--sidebar-collapsed" : ""}`}
+      className={`app-shell ${isReader ? "app-shell--reader" : ""}`}
     >
       {!isReader ? (
-        <Sidebar
-          collapsed={sidebarCollapsed}
-          onToggle={() => setSidebarCollapsed((v) => !v)}
-        />
+        <Sidebar />
       ) : null}
 
       <div className="app-main">

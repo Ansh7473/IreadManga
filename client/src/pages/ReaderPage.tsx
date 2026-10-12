@@ -7,6 +7,7 @@ import type { ChapterPages, MangaCard } from "../types";
 import { useAuth } from "../auth/AuthContext";
 import { AdSlot } from "../components/AdSlot";
 import { ChapterComments } from "../components/ChapterComments";
+import { ChapterLoading } from "../components/ChapterLoading";
 
 export default function ReaderPage() {
   const { chapterId = "" } = useParams();
@@ -24,6 +25,7 @@ export default function ReaderPage() {
     () => localStorage.getItem("irm:dataSaver") === "1",
   );
   const [readPct, setReadPct] = useState(0);
+  const [artReady, setArtReady] = useState(false);
   const [commentChapterLabel, setCommentChapterLabel] = useState<string>();
   const [commentMangaTitle, setCommentMangaTitle] = useState<string>();
 
@@ -93,6 +95,10 @@ export default function ReaderPage() {
   const prevId = index >= 0 ? chapterIds[index + 1] : undefined;
   const nextId = index > 0 ? chapterIds[index - 1] : undefined;
 
+  useEffect(() => {
+    setArtReady(false);
+  }, [chapterId, dataSaver]);
+
   const images = dataSaver ? pages?.dataSaver : pages?.pages;
 
   useEffect(() => {
@@ -127,8 +133,21 @@ export default function ReaderPage() {
     });
   }
 
-  if (loading) {
-    return <div className="skeleton" style={{ height: 600 }} />;
+  if (loading || (pages && images?.length && !artReady)) {
+    return (
+      <>
+        {images?.[0] ? (
+          <img
+            className="reader-preload"
+            src={proxyUrl(images[0])}
+            alt=""
+            onLoad={() => setArtReady(true)}
+            onError={() => setArtReady(true)}
+          />
+        ) : null}
+        <ChapterLoading title={manga?.title} />
+      </>
+    );
   }
 
   if (error || !pages) {

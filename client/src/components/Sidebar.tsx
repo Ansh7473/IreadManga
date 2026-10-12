@@ -5,10 +5,9 @@ import { isBrowseNavActive, isLibraryNavActive } from "../utils/navActive";
 
 type Props = {
   collapsed?: boolean;
-  onToggle?: () => void;
 };
 
-export function Sidebar({ collapsed, onToggle }: Props) {
+export function Sidebar({ collapsed }: Props) {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const { user } = useAuth();
@@ -36,16 +35,6 @@ export function Sidebar({ collapsed, onToggle }: Props) {
             </span>
           ) : null}
         </NavLink>
-        {onToggle ? (
-          <button
-            type="button"
-            className="sidebar-toggle"
-            onClick={onToggle}
-            aria-label="Toggle menu"
-          >
-            ☰
-          </button>
-        ) : null}
       </div>
 
       <nav className="sidebar-nav">

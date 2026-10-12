@@ -63,13 +63,13 @@ input {
 /* ——— Shell ——— */
 .app-shell {
   display: grid;
-  grid-template-columns: minmax(0, var(--sidebar-w)) minmax(0, 1fr);
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
   min-height: 100vh;
   overflow-x: clip;
 }
 
 .app-shell--sidebar-collapsed {
-  grid-template-columns: minmax(0, var(--sidebar-collapsed)) minmax(0, 1fr);
+  grid-template-columns: var(--sidebar-collapsed) minmax(0, 1fr);
 }
 
 .app-shell--reader {
@@ -98,13 +98,13 @@ input {
   position: sticky;
   top: 0;
   height: 100vh;
-  min-width: 0;
-  max-width: 100%;
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
   background: var(--bg-elevated);
   display: flex;
   flex-direction: column;
   padding: 0.75rem 0.65rem;
-  overflow-x: clip;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -184,13 +184,17 @@ input {
   display: block;
   text-align: left;
   width: 100%;
-  padding: 0.55rem 0.65rem;
+  padding: 0.55rem 0.75rem;
   border-radius: 4px;
   color: var(--text-muted);
   border: 0;
   background: transparent;
   cursor: pointer;
   font-size: 0.92rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar-nav a:hover,
@@ -202,14 +206,14 @@ input {
 .sidebar-nav a.active {
   background: rgba(255, 92, 40, 0.12);
   color: var(--text);
-  border-left: 3px solid var(--accent);
-  padding-left: calc(0.65rem - 3px);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .sidebar-foot {
-  padding: 0.75rem 0.65rem;
+  padding: 0.75rem 0.75rem;
   color: var(--text-muted);
   font-size: 0.72rem;
+  line-height: 1.4;
   border-top: 1px solid var(--border);
 }
 
@@ -971,6 +975,142 @@ input {
 
 .reader-pages img {
   width: 100%;
+}
+
+.reader-preload {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chapter-load {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.85rem;
+  padding: 2rem 1.25rem 4rem;
+  background:
+    radial-gradient(ellipse at center, rgba(255, 92, 40, 0.08), transparent 55%),
+    var(--bg);
+}
+
+.chapter-load__mark {
+  position: relative;
+  width: 92px;
+  height: 112px;
+}
+
+.chapter-load__page {
+  position: absolute;
+  inset: 8px 14px 8px 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg-elevated);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 10px;
+  overflow: hidden;
+}
+
+.chapter-load__page span {
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  background: #2a2a2e;
+}
+
+.chapter-load__page span:nth-child(1) {
+  width: 78%;
+}
+
+.chapter-load__page span:nth-child(2) {
+  width: 100%;
+}
+
+.chapter-load__page span:nth-child(3) {
+  width: 64%;
+}
+
+.chapter-load__page span:nth-child(4) {
+  width: 88%;
+}
+
+.chapter-load__page::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 18px;
+  background: linear-gradient(180deg, transparent, rgba(255, 92, 40, 0.55), transparent);
+  animation: chapter-scan 1.4s ease-in-out infinite;
+}
+
+.chapter-load__glass {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border: 2.5px solid var(--accent);
+  border-radius: 50%;
+  right: 0;
+  top: 18px;
+  background: rgba(12, 12, 13, 0.35);
+  box-shadow: 0 0 0 4px rgba(255, 92, 40, 0.12);
+  animation: chapter-search 1.4s ease-in-out infinite;
+}
+
+.chapter-load__glass::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 2.5px;
+  background: var(--accent);
+  border-radius: 2px;
+  right: -6px;
+  bottom: 2px;
+  transform: rotate(40deg);
+}
+
+.chapter-load__title {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.chapter-load__sub {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+@keyframes chapter-scan {
+  0% {
+    top: -10px;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+@keyframes chapter-search {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-10px, 28px);
+  }
 }
 
 .reader-end {
