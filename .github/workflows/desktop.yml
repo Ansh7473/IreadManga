@@ -1,0 +1,36 @@
+name: Desktop
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm install --prefix desktop
+      - run: node desktop/prepare.mjs
+      - name: Package Windows
+        if: runner.os == 'Windows'
+        run: npm run dist:win --prefix desktop
+      - name: Package macOS
+        if: runner.os == 'macOS'
+        run: npm run dist:mac --prefix desktop
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.os }}
+          path: release/*
+          if-no-files-found: error

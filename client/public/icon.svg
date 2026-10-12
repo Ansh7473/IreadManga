@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="I Read Manga">
+  <rect width="512" height="512" rx="96" fill="#0c0c0d"/>
+  <path fill="#ff5c28" d="M128 128h256v72H128zm0 120h176v72H128zm0 120h256v72H128z"/>
+</svg>

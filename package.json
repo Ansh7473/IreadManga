@@ -1,0 +1,24 @@
+{
+  "name": "ireadmanga",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c cyan,magenta \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w client && npm run build -w server",
+    "start": "npm run start -w server",
+    "lint": "npm run lint -w client",
+    "test": "npm run test -w client",
+    "verify": "node scripts/verify-api.mjs",
+    "desktop:prepare": "npm run build && node desktop/prepare.mjs && npm install --prefix desktop",
+    "desktop": "npm run desktop:prepare && npm start --prefix desktop",
+    "desktop:win": "npm run desktop:prepare && npm run dist:win --prefix desktop",
+    "android:sync": "npm run build -w client && npm exec --prefix client -- cap sync android"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
