@@ -6,6 +6,8 @@ COPY package.json package-lock.json ./
 COPY client/package.json ./client/package.json
 COPY server/package.json ./server/package.json
 RUN npm ci
+# Bust the image cache when the frontend changes. The previous image kept the old loader.
+ARG FRONTEND_REV=loader-dashed-20261012
 COPY client ./client
 COPY server ./server
 RUN npm run build

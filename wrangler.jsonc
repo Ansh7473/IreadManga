@@ -8,7 +8,8 @@
     {
       "class_name": "MangaApp",
       "image": "./Dockerfile",
-      "max_instances": 1
+      "max_instances": 1,
+      "rollout_step_percentage": [100]
     }
   ],
   "durable_objects": {
