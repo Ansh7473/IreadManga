@@ -45,6 +45,21 @@ export default function BrowsePage() {
   const [error, setError] = useState<string | null>(null);
   const [localQ, setLocalQ] = useState(q);
   const [showAllTags, setShowAllTags] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFiltersOpen(false);
+    };
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [filtersOpen]);
 
   useEffect(() => {
     setLocalQ(q);
@@ -97,13 +112,17 @@ export default function BrowsePage() {
   }
 
   const visibleTags = showAllTags ? tags : tags.slice(0, 24);
+  const sortLabel = SORTS.find((s) => s.id === sort)?.label ?? "Popular";
+  const statusLabel = STATUSES.find((s) => s.id === status)?.label ?? "Any status";
+  const tagLabel = tags.find((t) => t.id === tag)?.name;
+  const filtersOn = sort !== "popular" || Boolean(status) || Boolean(tag);
 
   return (
     <div className="page-browse">
       <div className="browse-head">
         <div>
           <h1>Advanced search</h1>
-          <p>Filter by status and genre · press Ctrl+K for quick search</p>
+          <p>Press Ctrl+K for quick search</p>
         </div>
       </div>
 
@@ -119,70 +138,120 @@ export default function BrowsePage() {
       </form>
 
       {!q ? (
-        <div className="browse-filters">
-          <div className="filter-group">
-            <span className="filter-label">Sort</span>
-            <div className="chip-row chip-row--tight">
-              {SORTS.map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  className={`chip ${sort === s.id ? "chip--on" : ""}`}
-                  onClick={() => patch({ sort: s.id })}
-                >
-                  {s.label}
-                </button>
-              ))}
+        <div className="browse-toolbar">
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => setFiltersOpen(true)}
+          >
+            Sort & filter
+          </button>
+          <p className="browse-summary">
+            {sortLabel}
+            {status ? ` · ${statusLabel}` : ""}
+            {tagLabel ? ` · ${tagLabel}` : ""}
+          </p>
+          {filtersOn ? (
+            <button
+              type="button"
+              className="browse-clear"
+              onClick={() => patch({ sort: "", status: "", tag: "" })}
+            >
+              Clear
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      {filtersOpen ? (
+        <div className="filter-sheet" role="presentation">
+          <button
+            type="button"
+            className="filter-sheet__backdrop"
+            aria-label="Close filters"
+            onClick={() => setFiltersOpen(false)}
+          />
+          <div
+            className="filter-sheet__panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="filter-sheet-title"
+          >
+            <div className="filter-sheet__handle" aria-hidden />
+            <div className="filter-sheet__head">
+              <h2 id="filter-sheet-title">Sort & filter</h2>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => setFiltersOpen(false)}
+              >
+                Done
+              </button>
             </div>
-          </div>
-          <div className="filter-group">
-            <span className="filter-label">Status</span>
-            <div className="chip-row chip-row--tight">
-              {STATUSES.map((s) => (
-                <button
-                  key={s.id || "any"}
-                  type="button"
-                  className={`chip ${status === s.id ? "chip--on" : ""}`}
-                  onClick={() => patch({ status: s.id })}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          {tags.length > 0 ? (
             <div className="filter-group">
-              <span className="filter-label">Genres</span>
-              <div className="chip-row chip-row--tags">
-                <button
-                  type="button"
-                  className={`chip chip--sm ${!tag ? "chip--on" : ""}`}
-                  onClick={() => patch({ tag: "" })}
-                >
-                  All genres
-                </button>
-                {visibleTags.map((t) => (
+              <span className="filter-label">Sort</span>
+              <div className="chip-row chip-row--tight">
+                {SORTS.map((s) => (
                   <button
-                    key={t.id}
+                    key={s.id}
                     type="button"
-                    className={`chip chip--sm ${tag === t.id ? "chip--on" : ""}`}
-                    onClick={() => patch({ tag: t.id })}
+                    className={`chip ${sort === s.id ? "chip--on" : ""}`}
+                    onClick={() => patch({ sort: s.id === "popular" ? "" : s.id })}
                   >
-                    {t.name}
+                    {s.label}
                   </button>
                 ))}
-                {tags.length > 24 ? (
-                  <button
-                    type="button"
-                    className="chip chip--sm chip--ghost"
-                    onClick={() => setShowAllTags((v) => !v)}
-                  >
-                    {showAllTags ? "Show fewer" : `+${tags.length - 24} more`}
-                  </button>
-                ) : null}
               </div>
             </div>
-          ) : null}
+            <div className="filter-group">
+              <span className="filter-label">Status</span>
+              <div className="chip-row chip-row--tight">
+                {STATUSES.map((s) => (
+                  <button
+                    key={s.id || "any"}
+                    type="button"
+                    className={`chip ${status === s.id ? "chip--on" : ""}`}
+                    onClick={() => patch({ status: s.id })}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {tags.length > 0 ? (
+              <div className="filter-group">
+                <span className="filter-label">Genres</span>
+                <div className="chip-row chip-row--tags">
+                  <button
+                    type="button"
+                    className={`chip chip--sm ${!tag ? "chip--on" : ""}`}
+                    onClick={() => patch({ tag: "" })}
+                  >
+                    All genres
+                  </button>
+                  {visibleTags.map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      className={`chip chip--sm ${tag === t.id ? "chip--on" : ""}`}
+                      onClick={() => patch({ tag: t.id })}
+                    >
+                      {t.name}
+                    </button>
+                  ))}
+                  {tags.length > 24 ? (
+                    <button
+                      type="button"
+                      className="chip chip--sm chip--ghost"
+                      onClick={() => setShowAllTags((v) => !v)}
+                    >
+                      {showAllTags ? "Show fewer" : `+${tags.length - 24} more`}
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
+          </div>
         </div>
       ) : null}
 
