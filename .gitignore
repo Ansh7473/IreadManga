@@ -10,6 +10,7 @@ server/data/*.json
 *.tsbuildinfo
 coverage
 .turbo
+.wrangler
 desktop/bundle
 release
 client/android/.gradle

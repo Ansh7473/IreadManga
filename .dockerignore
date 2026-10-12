@@ -1,0 +1,8 @@
+node_modules
+.git
+.github
+desktop
+client/android
+release
+**/.wrangler
+*.md

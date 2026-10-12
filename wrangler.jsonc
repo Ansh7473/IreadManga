@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "ireadmanga",
+  "main": "cloudflare/worker.ts",
+  "compatibility_date": "2026-10-12",
+  "workers_dev": true,
+  "containers": [
+    {
+      "class_name": "MangaApp",
+      "image": "./Dockerfile",
+      "max_instances": 1
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "MANGA",
+        "class_name": "MangaApp"
+      }
+    ]
+  },
+  "exports": {
+    "MangaApp": {
+      "type": "durable-object",
+      "storage": "sqlite"
+    }
+  }
+}

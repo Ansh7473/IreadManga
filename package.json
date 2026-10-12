@@ -16,9 +16,12 @@
     "desktop:prepare": "npm run build && node desktop/prepare.mjs && npm install --prefix desktop",
     "desktop": "npm run desktop:prepare && npm start --prefix desktop",
     "desktop:win": "npm run desktop:prepare && npm run dist:win --prefix desktop",
-    "android:sync": "npm run build -w client && npm exec --prefix client -- cap sync android"
+    "android:sync": "npm run build -w client && npm exec --prefix client -- cap sync android",
+    "cf:deploy": "wrangler deploy"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "@cloudflare/containers": "^0.3.7",
+    "concurrently": "^9.2.1",
+    "wrangler": "^4.149.0"
   }
 }

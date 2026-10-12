@@ -31,6 +31,21 @@ npm run dev
 - Chapter images go through `/api/proxy` for clean loading  
 - Auth and progress data live in `server/data/*.json` (gitignored)
 
+## Cloudflare
+
+Pushing `master` deploys the site when this repo is connected as a Worker with Containers. The image is built from `Dockerfile` on Cloudflare. You do not run Docker on your PC.
+
+One-time, in the Cloudflare dashboard:
+
+1. **Workers & Pages → Create → Import a repository**
+2. Choose **Ansh7473/IreadManga**, production branch **master**
+3. Deploy command: `npx wrangler deploy`
+4. Build command can stay empty (Wrangler builds the image)
+
+After the first successful build, the site is on `https://ireadmanga.<your-subdomain>.workers.dev`. Later pushes to `master` deploy by themselves.
+
+Containers need the Workers Paid plan. The container sleeps after 30 minutes of no traffic, and a new deploy starts a fresh disk, so accounts saved only in `server/data` can reset until that storage moves to D1.
+
 ## Desktop (Windows and Mac)
 
 The desktop app is the same UI plus the API, packaged with Electron. Windows installers build on Windows. Mac disk images build on a Mac (GitHub Actions does both when you push a `v*` tag).
